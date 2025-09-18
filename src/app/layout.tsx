@@ -5,7 +5,7 @@ import { Header } from '@/components/header';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'Fainted.360',
+  title: 'Xeon.360',
   description: 'Share your favorite images and videos.',
 };
 
