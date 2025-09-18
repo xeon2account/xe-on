@@ -1,3 +1,28 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "1",
+      "description": "A beautiful landscape to start the feed!",
+      "imageUrl": "https://picsum.photos/seed/1/600/800",
+      "imageHint": "landscape mountain"
+    },
+    {
+      "id": "2",
+      "description": "Exploring the city at night.",
+      "imageUrl": "https://picsum.photos/seed/2/800/600",
+      "imageHint": "city night"
+    },
+    {
+      "id": "4",
+      "description": "This one is waiting for approval.",
+      "imageUrl": "https://picsum.photos/seed/4/700/700",
+      "imageHint": "abstract texture"
+    },
+    {
+      "id": "5",
+      "description": "Another stunning view.",
+      "imageUrl": "https://picsum.photos/seed/5/800/800",
+      "imageHint": "ocean sunset"
+    }
+  ]
 }
