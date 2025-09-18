@@ -63,7 +63,7 @@ export default async function AdminDashboard() {
                 </TableCell>
                 <TableCell className="font-medium max-w-xs md:max-w-sm truncate">{item.caption}</TableCell>
                 <TableCell>{item.type}</TableCell>
-                <TableCell>{item.createdAt.toLocaleDateString()}</TableCell>
+                <TableCell>{new Date(item.createdAt).toLocaleDateString()}</TableCell>
                 <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1">
                         <Button asChild variant="ghost" size="icon" aria-label="View Content">
@@ -83,6 +83,7 @@ export default async function AdminDashboard() {
        {allContent.length === 0 && (
           <div className="text-center py-20 border rounded-lg mt-4">
             <h2 className="text-xl font-semibold">No content submitted yet.</h2>
+            <p className="text-muted-foreground mt-2">Create a .env.local file and add your MongoDB connection string to see content.</p>
           </div>
         )}
     </div>

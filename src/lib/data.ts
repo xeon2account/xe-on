@@ -1,48 +1,15 @@
 import { unstable_noStore as noStore } from 'next/cache';
-import type { ContentItem } from './definitions';
+import type { ContentItem, ContentItemFromDb } from './definitions';
+import { connectToDatabase } from './mongodb';
+import { ObjectId } from 'mongodb';
 
-let contentItems: ContentItem[] = [
-  {
-    id: '1',
-    url: 'https://picsum.photos/seed/1/600/800',
-    caption: 'A beautiful landscape to start the feed!',
-    type: 'image',
-    status: 'approved',
-    createdAt: new Date('2023-10-26T10:00:00Z'),
-  },
-  {
-    id: '2',
-    url: 'https://picsum.photos/seed/2/800/600',
-    caption: 'Exploring the city at night.',
-    type: 'image',
-    status: 'approved',
-    createdAt: new Date('2023-10-26T11:00:00Z'),
-  },
-  {
-    id: '3',
-    url: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-    caption: 'A short video clip.',
-    type: 'video',
-    status: 'approved',
-    createdAt: new Date('2023-10-26T12:00:00Z'),
-  },
-  {
-    id: '4',
-    url: 'https://picsum.photos/seed/4/700/700',
-    caption: 'This one is waiting for approval.',
-    type: 'image',
-    status: 'pending',
-    createdAt: new Date('2023-10-26T13:00:00Z'),
-  },
-   {
-    id: '5',
-    url: 'https://picsum.photos/seed/5/800/800',
-    caption: 'Another stunning view.',
-    type: 'image',
-    status: 'approved',
-    createdAt: new Date('2023-10-27T09:00:00Z'),
-  },
-];
+const mapContentItemFromDb = (item: ContentItemFromDb): ContentItem => {
+  return {
+    ...item,
+    id: item._id.toString(),
+    createdAt: item.createdAt,
+  };
+};
 
 const getUrlType = (url: string): 'image' | 'video' => {
   try {
@@ -57,46 +24,53 @@ const getUrlType = (url: string): 'image' | 'video' => {
 
 export async function getApprovedContent(): Promise<ContentItem[]> {
   noStore();
-  return contentItems
-    .filter(item => item.status === 'approved')
-    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  const { db } = await connectToDatabase();
+  const items = await db.collection<ContentItemFromDb>('content')
+    .find({ status: 'approved' })
+    .sort({ createdAt: -1 })
+    .toArray();
+
+  return items.map(mapContentItemFromDb);
 }
 
 export async function getAllContent(): Promise<ContentItem[]> {
   noStore();
-  return [...contentItems].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  const { db } = await connectToDatabase();
+  const items = await db.collection<ContentItemFromDb>('content')
+    .find()
+    .sort({ createdAt: -1 })
+    .toArray();
+  return items.map(mapContentItemFromDb);
 }
 
-export async function addContent(url: string, caption: string): Promise<ContentItem> {
+export async function addContent(url: string, caption: string): Promise<void> {
   noStore();
-  const newContent: ContentItem = {
-    id: (contentItems.length + 1 + Math.random()).toString(),
+  const { db } = await connectToDatabase();
+  const newContent = {
     url,
     caption,
     type: getUrlType(url),
     status: 'pending',
     createdAt: new Date(),
   };
-  contentItems.unshift(newContent);
-  return newContent;
+  await db.collection('content').insertOne(newContent);
 }
 
-export async function approveContent(id: string): Promise<ContentItem | undefined> {
+export async function approveContent(id: string): Promise<void> {
   noStore();
-  const item = contentItems.find(item => item.id === id);
-  if (item) {
-    item.status = 'approved';
-  }
-  return item;
+  const { db } = await connectToDatabase();
+  await db.collection('content').updateOne(
+    { _id: new ObjectId(id) },
+    { $set: { status: 'approved' } }
+  );
 }
 
 export async function deleteContent(id: string): Promise<void> {
   noStore();
-  contentItems = contentItems.filter(item => item.id !== id);
+  const { db } = await connectToDatabase();
+  await db.collection('content').deleteOne({ _id: new ObjectId(id) });
 }
 
-// Mock admin verification. In a real app, use a proper auth system.
 export async function verifyAdminPassword(password: string): Promise<boolean> {
-  noStore();
   return password === 'admin123';
 }
