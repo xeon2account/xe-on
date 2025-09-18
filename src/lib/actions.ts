@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { addContent, approveContent, deleteContent, verifyAdminPassword } from './data';
+import { cookies } from 'next/headers';
 
 const FormSchema = z.object({
   url: z.string().url({ message: 'Please enter a valid URL.' }),
@@ -50,8 +51,16 @@ export async function login(prevState: LoginState, formData: FormData) {
             message: 'Invalid password.',
         };
     }
+
+    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+    cookies().set('session', 'admin', { expires, httpOnly: true });
     
     redirect('/admin/dashboard');
+}
+
+export async function logout() {
+    cookies().set('session', '', { expires: new Date(0) });
+    redirect('/admin/login');
 }
 
 
