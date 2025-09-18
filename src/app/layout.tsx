@@ -5,8 +5,8 @@ import { Header } from '@/components/header';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'CaptionShare',
-  description: 'Share your favorite images and videos with a caption.',
+  title: 'Fainted.360',
+  description: 'Share your favorite images and videos.',
 };
 
 export default function RootLayout({
