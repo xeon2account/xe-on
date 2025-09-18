@@ -63,7 +63,7 @@ export default async function AdminDashboard() {
                 </TableCell>
                 <TableCell className="font-medium max-w-xs md:max-w-sm truncate">{item.caption}</TableCell>
                 <TableCell>{item.type}</TableCell>
-                <TableCell>{new Date(item.createdAt).toLocaleDateString()}</TableCell>
+                <TableCell>{item.createdAt.toLocaleDateString()}</TableCell>
                 <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1">
                         <Button asChild variant="ghost" size="icon" aria-label="View Content">

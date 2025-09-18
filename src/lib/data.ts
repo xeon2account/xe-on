@@ -6,8 +6,11 @@ import { ObjectId } from 'mongodb';
 
 const mapContentItemFromDb = (item: ContentItemFromDb): ContentItem => {
   return {
-    ...item,
     id: item._id.toString(),
+    url: item.url,
+    caption: item.caption,
+    type: item.type,
+    status: item.status,
     createdAt: item.createdAt,
   };
 };
