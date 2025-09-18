@@ -1,3 +1,4 @@
+'use server';
 import { unstable_noStore as noStore } from 'next/cache';
 import type { ContentItem, ContentItemFromDb } from './definitions';
 import { connectToDatabase } from './mongodb';
@@ -72,5 +73,5 @@ export async function deleteContent(id: string): Promise<void> {
 }
 
 export async function verifyAdminPassword(password: string): Promise<boolean> {
-  return password === 'admin123';
+  return password === process.env.ADMIN_PASSWORD;
 }
