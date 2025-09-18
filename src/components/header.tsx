@@ -24,7 +24,7 @@ export function Header() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         <Link href="/" className="flex items-center gap-2">
           <Camera className="w-8 h-8 text-primary" />
-          <h1 className="text-2xl font-bold text-foreground">Fainted.360</h1>
+          <h1 className="text-2xl font-bold text-foreground">Xeon.360</h1>
         </Link>
         <nav className="flex items-center gap-2 sm:gap-4">
           <Button variant="ghost" asChild>
