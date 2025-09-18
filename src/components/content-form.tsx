@@ -1,6 +1,7 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { submitContent, type State } from '@/lib/actions';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -21,7 +22,7 @@ function SubmitButton() {
 
 export function ContentForm() {
   const initialState: State = { message: null, errors: {} };
-  const [state, dispatch] = useFormState(submitContent, initialState);
+  const [state, dispatch] = useActionState(submitContent, initialState);
   const { toast } = useToast();
 
   useEffect(() => {
