@@ -3,11 +3,15 @@
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { addContent, approveContent, deleteContent } from './data';
+import { addContent, approveContent, deleteContent, verifyAdminPassword } from './data';
 
 const FormSchema = z.object({
   url: z.string().url({ message: 'Please enter a valid URL.' }),
   caption: z.string().min(3, { message: 'Caption must be at least 3 characters long.' }).max(280, { message: 'Caption cannot be longer than 280 characters.' }),
+});
+
+const LoginSchema = z.object({
+    password: z.string().min(1, { message: 'Password is required.' }),
 });
 
 export type State = {
@@ -17,6 +21,39 @@ export type State = {
   };
   message?: string | null;
 };
+
+export type LoginState = {
+    errors?: {
+        password?: string[];
+    };
+    message?: string | null;
+}
+
+export async function login(prevState: LoginState, formData: FormData) {
+    const validatedFields = LoginSchema.safeParse({
+        password: formData.get('password'),
+    });
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: 'Invalid input.',
+        };
+    }
+
+    const { password } = validatedFields.data;
+    const isValid = await verifyAdminPassword(password);
+
+    if (!isValid) {
+        return {
+            errors: {},
+            message: 'Invalid password.',
+        };
+    }
+    
+    redirect('/admin/dashboard');
+}
+
 
 export async function submitContent(prevState: State, formData: FormData) {
   const validatedFields = FormSchema.safeParse({
